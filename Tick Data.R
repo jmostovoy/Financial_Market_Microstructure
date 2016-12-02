@@ -1,5 +1,6 @@
 install.packages("highfrequency")
 install.packages("devtools")
+install.packages("kimisc")
 library(zoo)
 library(xts)
 library(highfrequency)
@@ -18,22 +19,17 @@ nsd2<-nsd[c(round(runif(250, .5, 3178.5))),]
 View(nsd2)
 nsd2[,1]
 
-dates <- c("20130822", "201308")
-whateve<-c(1,2)
-hi<-data.frame(dates, whateve)
-View(hi)
-hi$dates<-as.Date(hi$dates, format= "%Y%m%d")
-
 trades <- read.csv("trades.csv", header = T)
 trades<-trades[-c(6, 7)]
 names(trades)<-c("symbol", "date", "time", "price", "size")
+datetime<-paste(trades$date, trades$time)
+trades<-data.frame(trades, datetime)
+trades$datetime<-strptime(as.character(trades$datetime) ,
+                          format= '%Y%m%d %H:%M:%S')
+trades<-trades[-c(2,3)]
+trades<-data.frame(trades[1], trades[4], trades[2], trades[3])
 
-trades$date<-as.Date(as.character(trades$date), format= "%Y%m%d")
-trades$time<-as.character(trades$time)
-View(trades)
-trades$time<-strptime(trades$time, format = "%H:%M:%S")
-
-
+mydate = strptime('16/Oct/2005:07:51:00',format='%d/%b/%Y:%H:%M:%S')
 trades$DATE=paste(trades$DATE, trades$TIME, sep=" ") #adds a new col to data frame
 #by merging two existing cols
 View(trades)
