@@ -37,7 +37,6 @@ drop  t tst1 h m s ms tl  qu_*
 order date time
 rename sym_root ticker
 
-* The data is large, so we look at only 5 minutes.
 drop if time>tc(16:00:00.000)
 drop if time<tc(9:30:00.000)
 
