@@ -5,8 +5,8 @@ library(xts)
 library(highfrequency)
 library(plyr)
 library(devtools)
+library(plyr)
 #yooooooooooo
-
 
 setwd("~/Documents")
 nsd <- read.csv("companylist.csv", sep=",", header = T)
@@ -18,11 +18,21 @@ nsd2<-nsd[c(round(runif(250, .5, 3178.5))),]
 View(nsd2)
 nsd2[,1]
 
-library(help="highfrequency")
+dates <- c("20130822", "201308")
+whateve<-c(1,2)
+hi<-data.frame(dates, whateve)
+View(hi)
+hi$dates<-as.Date(hi$dates, format= "%Y%m%d")
 
-trades <- read.csv("trades.csv", sep=",", header = T)
+trades <- read.csv("trades.csv", header = T)
+trades<-trades[-c(6, 7)]
+names(trades)<-c("symbol", "date", "time", "price", "size")
+
+trades$date<-as.Date(as.character(trades$date), format= "%Y%m%d")
+trades$time<-as.character(trades$time)
 View(trades)
-trades<-trades[-c(2, 6, 7)]
+trades$time<-strptime(trades$time, format = "%H:%M:%S")
+
 
 trades$DATE=paste(trades$DATE, trades$TIME, sep=" ") #adds a new col to data frame
 #by merging two existing cols
