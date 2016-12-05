@@ -129,7 +129,17 @@ mega[is.na(mega)]<- " "
 write.csv(mega, file = "mega_null.csv", row.names = F, col.names = T)
 
 
+##### Cleaning Data through package "highfrequency" #####
 
+from = "2011-12-01"; 
+to = "2011-12-02"; 
+datasource = "~/Documents/raw_data";
+datadestination = "~/xts_data";
+convert( from=from, to=to, datasource=datasource, 
+         datadestination=datadestination, trades = T,  quotes = T, 
+         ticker="IBM", dir = TRUE, extension = "csv", 
+         header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+         format="%Y%m%d %H:%M:%S", onefile = TRUE )
 
 
 
