@@ -14,6 +14,8 @@ library(plyr)
 library(TTR)
 library(quantmod)
 library(progress)
+library(timeDate)
+library(xts)
 #yooooooooooo
 
 #### Load Data ####
@@ -28,7 +30,7 @@ nsd2<-nsd[c(round(runif(250, .5, 3178.5))),]
 trades <- read.csv("trades.csv", header = T)
 
 
-#### Clean Data ####
+#### Clean Data in data.frame format so as to analyize multiple stock statistics ####
 trades<-trades[,-c(6, 7)]
 names(trades)<-c("symbol", "date", "time", "price", "size")
 datetime<-paste(trades$date, trades$time)
@@ -128,18 +130,43 @@ mega[is.na(mega)]<- " "
 #Write csv file
 write.csv(mega, file = "mega_null.csv", row.names = F, col.names = T)
 
+####Taking just (for example) non-cleaned fox data...####
+fox_trades<-read.csv("trades.csv", header = T)
+View(fox_trades)
+fox_trades<-fox_trades[fox_trades$SYMBOL=="FOXA",]
+fox_quotes<-read.csv("quotes.csv", header = T)
+View(fox_quotes)
+fox_quotes<-fox_quotes[fox_quotes$SYMBOL=="FOXA",]
+write.csv(fox_trades, file = "fox_trades.csv", row.names = F, col.names = T)
+write.csv(fox_quotes, file = "fox_quotes.csv", row.names = F, col.names = T)
 
-##### Cleaning Data through package "highfrequency" #####
 
-from = "2011-12-01"; 
-to = "2011-12-02"; 
-datasource = "~/Documents/raw_data";
-datadestination = "~/xts_data";
-convert( from=from, to=to, datasource=datasource, 
-         datadestination=datadestination, trades = T,  quotes = T, 
-         ticker="IBM", dir = TRUE, extension = "csv", 
-         header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
-         format="%Y%m%d %H:%M:%S", onefile = TRUE )
+##### Cleaning Data through package xts format so as to analyize individual stock statistics #####
+
+from <- "2013-08-22"
+to <- "2013-08-22"
+ticker<-"FOXA"
+datasource <- "~/Documents/raw_data"
+datadestination <- "~/Documents/xts_data"
+convert(from=from, to=to1, datasource=datasource, 
+        datadestination=datadestination, trades = T,  quotes = F, 
+        ticker=ticker, dir = TRUE, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%S", onefile = TRUE )
+convert(from=from, to=to, datasource=datasource, 
+        datadestination=datadestination, trades = F,  quotes = T, 
+        ticker=ticker, dir = F, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%S", onefile = TRUE )
+
+
+foxt = TAQLoad(tickers=ticker, from="2013-08-22", to="2013-08-22", trades=TRUE,
+                     quotes=FALSE, datasource= datadestination)
+foxq = TAQLoad(tickers=ticker, from="2013-08-22", to="2013-08-22",trades=F,
+               quotes=TRUE, datasource=datadestination)
+View(foxt)
+View(foxq)
+
 
 
 
