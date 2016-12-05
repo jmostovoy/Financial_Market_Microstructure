@@ -4,6 +4,7 @@ install.packages("highfrequency")
 install.packages("devtools")
 install.packages("kimisc")
 install.packages("quantmod")
+install.packages("progress")
 library(zoo)
 library(xts)
 library(highfrequency)
@@ -12,6 +13,7 @@ library(devtools)
 library(plyr)
 library(TTR)
 library(quantmod)
+library(progress)
 #yooooooooooo
 
 #### Load Data ####
@@ -79,6 +81,48 @@ head(counting1)
 
 #Loop to seperate data into one large matrix defined by z columns, with (1,...,n), n:= # of
 #interesting parameters and z=n*J, J=# of stocks, and m:= # of observations for stock j.
+
+
+lmn<-c(1:length(trades$symbol))
+for (i in c(1:length(lmn))) {
+  lmn[i]=1
+}
+
+for (j in c(2:length(trades$symbol))) {
+ if (trades$symbol[j]==trades$symbol[j-1]) {
+   lmn[j]<-lmn[j-1]
+   } else {
+     lmn[j]<-lmn[j-1]+1
+   }
+}
+
+trades<-data.frame(trades, lmn)
+
+for (j in c(1: (length(counting1)-1) ) ) {
+    mega[,c( (6*j-5) : (6*(j))) ] <- rbind(as.matrix(trades[c(j==trades$lmn), c(1:6)] , ncol=6),
+                                             matrix(NA, nrow=max(counting)-sum(c(j==trades$lmn)), 
+                                                    ncol=6))
+
+}
+
+#Add company tickers to first column
+companies<- rbind(as.matrix(unique(trades$symbol) , ncol=1),
+            matrix(NA, nrow=(max(counting)-length(unique(trades$symbol))), ncol=1))
+mega<-cbind(companies, mega)
+
+#Rename matrix columns
+nms<-matrix(c("symbol", "datetime", "price", "size", 
+              "numericdate", "price x size"), ncol=1, nrow=6*length(counting))
+nms<-c("all stock tickers", nms)
+names(mega)<- nms
+
+
+#Write csv file
+write.csv(mega, file = "mega.csv")
+
+
+
+#### O.G. Slow Code ####
 for (i in c(1:length(trades$symbol))) {
   for (j in c(1: (length(counting1)-1) ) ) {
     if(i>counting1[j] & j<=counting[j+1]) {
@@ -87,10 +131,23 @@ for (i in c(1:length(trades$symbol))) {
     }
   }
 }
-mega<-data.frame(t(unique(trades$symbol)), mega)
+dzy<- rbind(as.matrix(unique(trades$symbol) , ncol=1),
+            matrix(NA, nrow=(max(counting)-length(unique(trades$symbol))), ncol=1))
+mega<-cbind(dzy, mega)
 
 
 #### Code Playground #### hii
+
+bvx<-rbind(as.matrix(trades[c(2==trades$lmn), c(1:6)] , ncol=6),
+      matrix(NA, nrow= max(counting)-sum(c(2==trades$lmn)) , ncol=6))
+View(bvx)
+dim(bvx)
+dim(mega)
+
+
+as.matrix(trades[c(1==trades$lmn), c(1:6)] , ncol=6)
+
+sum(c(1!=trades$lmn))+sum(c(1==trades$lmn))
 
 counting1[1]
 1:counting1[2]
@@ -99,9 +156,9 @@ hzy<-matrix(NA, nrow=(max(counting)), ncol=6)
 dim(hzy)
 
 hzy[, c( (6*1-5) : (6*(1)+1)) ] <- rbind(as.matrix(trades[c(1:counting1[2]),], ncol=6),
-                                         matrix(NA, nrow=(max(counting)-(counting1[2])), ncol=6))
+                                         matrix(NA, nrow=(max(counting)-(counting1[3])), ncol=6))
       
-
+max(counting)
 
 View(hzy[, c( (6*1-5) : (6*(1))) ])
 
