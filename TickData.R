@@ -22,12 +22,9 @@ setwd("~/Documents")
 nsd <- read.csv("companylist.csv", sep=",", header = T)
 View(nsd)
 
-round(runif(100, 1, 3178.5))
-
 nsd2<-nsd[c(round(runif(250, .5, 3178.5))),]
-View(nsd2)
-nsd2[,1]
 
+#Open data
 trades <- read.csv("trades.csv", header = T)
 
 
@@ -53,6 +50,7 @@ pxv<-trades$price*trades$size
 trades<-data.frame(trades, pxv)
 
 
+
 counting<-c(1:length(unique(trades$symbol)) )
 for (i in c(1:(length(unique(trades$symbol))))) {
   counting[i]<-sum( unique(trades$symbol)[i]==trades$symbol)
@@ -65,13 +63,10 @@ for(i in c(2:(length(counting1)))) {
 counting1<-c(0, counting1)
 
 
-#Set up vectors for the (time consuming) loop coming u
-max(counting)
+#Set up vectors for the (time consuming) loop coming up
 mega<-matrix(NA, nrow=max(counting), ncol=(6*length(unique(trades$symbol))))
-View(mega)
 counting2<-counting1[-c(1)]
 counting2<-c(1,counting2)
-counting2
 
 #Important numbers to assess how hard data will be to process in the next Loop
 length(unique(trades$symbol))
@@ -96,7 +91,10 @@ for (j in c(2:length(trades$symbol))) {
    }
 }
 
+
+
 trades<-data.frame(trades, lmn)
+View(trades)
 
 for (j in c(1: (length(counting1)-1) ) ) {
     mega[,c( (6*j-5) : (6*(j))) ] <- rbind(as.matrix(trades[c(j==trades$lmn), c(1:6)] , ncol=6),
@@ -108,17 +106,37 @@ for (j in c(1: (length(counting1)-1) ) ) {
 #Add company tickers to first column
 companies<- rbind(as.matrix(unique(trades$symbol) , ncol=1),
             matrix(NA, nrow=(max(counting)-length(unique(trades$symbol))), ncol=1))
-mega<-cbind(companies, mega)
+mega<-data.frame(cbind(companies, mega))
 
 #Rename matrix columns
 nms<-matrix(c("symbol", "datetime", "price", "size", 
               "numericdate", "price x size"), ncol=1, nrow=6*length(counting))
-nms<-c("all stock tickers", nms)
+nms<-as.vector(c("all stock tickers", as.vector(nms)))
 names(mega)<- nms
 
+as.vector(nms)
+
+#Not that important Stats
+max(counting)
+min(counting)
+mean(counting)
+dim(mega)
+
+#Change NULL -> _
+mega[is.na(mega)]<- " "
 
 #Write csv file
-write.csv(mega, file = "mega.csv")
+write.csv(mega, file = "mega_null.csv", row.names = F, col.names = T)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -134,7 +152,6 @@ for (i in c(1:length(trades$symbol))) {
 dzy<- rbind(as.matrix(unique(trades$symbol) , ncol=1),
             matrix(NA, nrow=(max(counting)-length(unique(trades$symbol))), ncol=1))
 mega<-cbind(dzy, mega)
-
 
 #### Code Playground #### hii
 
@@ -199,4 +216,5 @@ for (j in c(1:199542)) {
 
 
 unique(trades$symbol)
+#Say what???
 
