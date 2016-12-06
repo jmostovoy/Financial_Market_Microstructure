@@ -154,7 +154,7 @@ datasource <- "~/Documents/raw_data"
 datadestination <- "~/Documents/xts_data"
 convert(from=from, to=to1, datasource=datasource, 
         datadestination=datadestination, trades = T,  quotes = F, 
-        ticker=ticker, dir = TRUE, extension = "csv", 
+        ticker=ticker, dir = F, extension = "csv", 
         header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
         format="%Y%m%d %H:%M:%S", onefile = TRUE )
 convert(from=from, to=to, datasource=datasource, 

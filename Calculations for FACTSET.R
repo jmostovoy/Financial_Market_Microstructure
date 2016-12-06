@@ -11,7 +11,6 @@ library(timeDate)
 library(xts)
 library(fasttime)
 library(data.table)
-#yooooooooooo
 
 #### Load Data ####
 
@@ -23,6 +22,9 @@ nsd2<-nsd[c(round(runif(250, .5, 3178.5))),]
 
 #Open data
 trades <- read.csv("trades.csv", header = T)
+quotes <- read.csv("quotes.csv", header=T)
+View(trades)
+View(quotes)
 
 
 #### Clean Data in data.frame format so as to analyize multiple stock statistics ####
