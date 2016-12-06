@@ -167,91 +167,67 @@ foxq = TAQLoad(tickers=ticker, from="2013-08-22", to="2013-08-22",trades=F,
 View(foxt)
 View(foxq)
 
+dim(foxt)
+foxt<-exchangeHoursOnly(foxt)
+foxq<-exchangeHoursOnly(foxq)
+
+ext<-as.character(autoSelectExchangeTrades(foxt)[1,2])
+exq<-as.character(autoSelectExchangeQuotes(foxq)[1,2])
+
+foxtc<-tradesCleanup(tdataraw = foxt, exchanges = ext)
+foxqc<-foxq[exq==foxq$EX ,]
+foxqc<-noZeroQuotes(foxqc)
+foxqc<-rmLargeSpread(foxqc)
+foxqc<-mergeQuotesSameTimestamp(foxqc)
+foxtc$tdata<-tradesCleanupFinal(tdata = foxtc$tdata, qdata = foxqc)
 
 
+#### Liquidity Measures ####
+matched<-matchTradesQuotes(foxtc$tdata, foxqc)
+View(matched)
+tdirect<-getTradeDirection(matched)
 
+liqtypes<- c("es", "rs", "value_trade", "signed_value_trade", "signed_trade_size",
+             "di_diff", "pes", "prs", "price_impact", "prop_price_impact", "tspread", 
+             "pts", "p_return_sqr", "p_return_abs", "qs", "pqs", "logqs", 
+             "logsize", "qslope", "logqslope", "mq_return_sqr", "mq_return_abs")
 
+liquidity<-matrix(NA, nrow=length(tdirect), ncol=length(liqtypes))
 
-
-
-
-
-
-#### O.G. Slow Code ####
-for (i in c(1:length(trades$symbol))) {
-  for (j in c(1: (length(counting1)-1) ) ) {
-    if(i>counting1[j] & j<=counting[j+1]) {
-      mega[,c( (6*j-5) : (6*(j))) ] <- rbind(as.matrix(trades[c(counting1[j]+1:counting1[j+1]),] , ncol=6),
-                                      matrix(NA, nrow=(max(counting)-(counting1[j+1])), ncol=6))
-    }
-  }
+for (i in c(1:length(liqtypes))) {
+  liquidity[,i]<-tqLiquidity(matched, foxtc$tdata, foxqc, type = liqtypes[i])
 }
-dzy<- rbind(as.matrix(unique(trades$symbol) , ncol=1),
-            matrix(NA, nrow=(max(counting)-length(unique(trades$symbol))), ncol=1))
-mega<-cbind(dzy, mega)
-
-#### Code Playground #### hii
-
-bvx<-rbind(as.matrix(trades[c(2==trades$lmn), c(1:6)] , ncol=6),
-      matrix(NA, nrow= max(counting)-sum(c(2==trades$lmn)) , ncol=6))
-View(bvx)
-dim(bvx)
-dim(mega)
-
-
-as.matrix(trades[c(1==trades$lmn), c(1:6)] , ncol=6)
-
-sum(c(1!=trades$lmn))+sum(c(1==trades$lmn))
-
-counting1[1]
-1:counting1[2]
-
-hzy<-matrix(NA, nrow=(max(counting)), ncol=6)
-dim(hzy)
-
-hzy[, c( (6*1-5) : (6*(1)+1)) ] <- rbind(as.matrix(trades[c(1:counting1[2]),], ncol=6),
-                                         matrix(NA, nrow=(max(counting)-(counting1[3])), ncol=6))
-      
-max(counting)
-
-View(hzy[, c( (6*1-5) : (6*(1))) ])
-
-ll<-rbind(as.matrix(trades[c(1:counting1[2]),], ncol=6),
-          matrix(NA, nrow=(max(counting)-(counting1[2])), ncol=6))
-View(ll)
-dim(ll)
-dim(hzy)
-View(hzy)
-max(counting)
+liquidity<-data.frame(liquidity)
+liqtypes2<-c("effective spread", "realized spread", "trade value (price × size)", 
+             "signed trade value", "signed trade size", "depth imbalance", 
+             "proportional effective spread", "proportional realized spread", 
+             "price impact", "proportional price impact", "half traded spread", 
+             "proportional half-traded spread", "squared log return on Trade prices", 
+             "absolute log return on Trade prices", "quoted spread", 
+             "proportional quoted spread", "log quoted spread", "log quoted size", 
+             "quoted slope", "log quoted slope", "midquote squared return", 
+             "midquote absolute return")
+names(liquidity)<- liqtypes2
+row.names(liquidity)<-row.names(data.frame(matched))
+View(liquidity)
 
 
-c(1:counting1[2])
-length(trades$symbol=="ABCD")
-
-counting1
-c(1:length(trades$symbol))
-
-
-mega<-list()
-
-
-max_length <- max(sapply(mega,length))
-bb<-sapply(mega, function(x){
-  c(x, rep(NA, max_length - length(x)))
-})
-View(mega)
-
-matrix()^
-
-mega<-data.frame(0, ncol=)
-
-for (j in c(1:199542)) {
-  for(i in c(1:length(unique(trades$symbol)))) {
-      mega[(j-counting[i]),c((6*i-5):6*i)]<-trades[i,]
-  }
-  }
+# Example, liquidity before & after market out of function
+before<-as.POSIXlt("2013-08-22 12:19:19")
+after<-as.POSIXlt("2013-08-22 15:25:06")
+beef<-as.POSIXlt(row.names(liquidity))<before
+aftrr<-as.POSIXlt(row.names(liquidity))>after
+View(beef)
+mean(liquidity[beef, 1])
+mean(liquidity[aftrr, 1])
+mean(liquidity[beef, 2])
+mean(liquidity[aftrr, 2])
+#^so, effective spreads are nearly uneffected, but realized are more than doubled
 
 
-unique(trades$symbol)
-#Say what???
+####VPIN Calculations####
+
+
+
+
 
