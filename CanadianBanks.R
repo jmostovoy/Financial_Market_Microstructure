@@ -1,3 +1,4 @@
+install.packages("FinAsym")
 library(zoo)
 library(xts)
 library(highfrequency)
@@ -11,6 +12,7 @@ library(timeDate)
 library(xts)
 library(fasttime)
 library(data.table)
+library(FinAsym)
 
 
 ####Seperating data####
@@ -239,3 +241,154 @@ setwd("~/Documents")
 write.csv(TD_liq, file = "TD_liq.csv", row.names = T, col.names = T)
 
 
+#### VPIN Calculations ####
+
+#Define Vector that computes unique days & # of days in each interval
+
+TDqc.df <- data.frame(date=index(TDqc), coredata(TDqc))
+
+TD_udays<-(unique(as.Date(TDqc.df$date)))
+TD_days<-c(1:length(TD_udays))
+for (i in c(1:length(TD_udays))) {
+  TD_days[i]<-sum(as.Date(TDqc.df$date)==TD_udays[i])
+}
+TD_daysc<-TD_days
+for (i in c(2:length(TD_udays))) {
+  TD_daysc[i]<-TD_daysc[i]+TD_daysc[i-1]
+}
+TD_daysc<-c(1,TD_daysc)
+TD_daysc
+
+#Manipulate Data Frame
+TD_date<-as.Date(TDqc.df$date)
+TD_time<-strftime(TDqc.df$date, format="%H:%M:%S", tz= "GMT")
+TDqc.df<-data.frame(TDqc.df, TD_date, TD_time)
+TDqc.df$BID<-as.numeric(levels(TDqc.df$BID))[TDqc.df$BID]
+TDqc.df$OFR<-as.numeric(levels(TDqc.df$OFR))[TDqc.df$OFR]
+
+#PIN
+
+a1<-classify_quotes(TDqc.df[c(TD_daysc[1]:TD_daysc[2]), c(4,6)], 1, 2, TD_udays[1])
+a2<-classify_quotes(TDqc.df[c(TD_daysc[2]:TD_daysc[3]), c(4,6)], 1, 2, TD_udays[2])
+a3<-classify_quotes(TDqc.df[c(TD_daysc[3]:TD_daysc[4]), c(4,6)], 1, 2, TD_udays[3])
+a4<-classify_quotes(TDqc.df[c(TD_daysc[4]:TD_daysc[5]), c(4,6)], 1, 2, TD_udays[4])
+a5<-classify_quotes(TDqc.df[c(TD_daysc[5]:TD_daysc[6]), c(4,6)], 1, 2, TD_udays[5])
+a6<-classify_quotes(TDqc.df[c(TD_daysc[6]:TD_daysc[7]), c(4,6)], 1, 2, TD_udays[6])
+a7<-classify_quotes(TDqc.df[c(TD_daysc[7]:TD_daysc[8]), c(4,6)], 1, 2, TD_udays[7])
+a8<-classify_quotes(TDqc.df[c(TD_daysc[8]:TD_daysc[9]), c(4,6)], 1, 2, TD_udays[8])
+a9<-classify_quotes(TDqc.df[c(TD_daysc[9]:TD_daysc[10]), c(4,6)], 1, 2, TD_udays[9])
+a1
+
+AA<-data.frame(c(a1$no_trades, a1$sell_trades, a1$buy_trades), 
+               c(a2$no_trades, a2$sell_trades, a2$buy_trades), 
+               c(a3$no_trades, a3$sell_trades, a3$buy_trades),
+               c(a4$no_trades, a4$sell_trades, a4$buy_trades), 
+               c(a5$no_trades, a5$sell_trades, a5$buy_trades),
+               c(a6$no_trades, a6$sell_trades, a6$buy_trades), 
+               c(a7$no_trades, a7$sell_trades, a7$buy_trades), 
+               c(a8$no_trades, a8$sell_trades, a8$buy_trades), 
+               c(a9$no_trades, a9$sell_trades, a9$buy_trades))
+View(AA)
+names(AA)<-TD_udays
+row.names(AA)<-c("no_trades", "sell_trades", "buy_trades")
+write.csv(AA, file = "PINInfo.csv", row.names = F, col.names = T)
+
+#Make a starting guess at the solution
+par0 <- c(0.5, 0.5, 0.5, 0.5)
+
+#Calc optimum parameters
+b1<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[1]:TD_daysc[2]), c(4,6)])
+b2<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[2]:TD_daysc[3]), c(4,6)])
+b3<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[3]:TD_daysc[4]), c(4,6)])
+b4<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[4]:TD_daysc[5]), c(4,6)])
+b5<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[5]:TD_daysc[6]), c(4,6)])
+b6<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[6]:TD_daysc[7]), c(4,6)])
+b7<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[7]:TD_daysc[8]), c(4,6)])
+b8<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[8]:TD_daysc[9]), c(4,6)])
+b9<-optim(par0, pin_likelihood, gr=NULL, TDqc.df[c(TD_daysc[9]:TD_daysc[10]), c(4,6)])
+
+BB<-data.frame(b1$par, b2$par, b3$par, b4$par, b5$par, b6$par, b7$par, b8$par, b9$par)
+View(BB)
+names(BB)<-TD_udays
+write.csv(BB, file = "TD_par.csv", row.names = F, col.names = T)
+
+
+#VPIN
+
+
+VPIN=function(stock,Vbucket) {
+  stock$dP1=diff(stock[,'PRICE'],lag=1,diff=1,na.pad=TRUE)
+  ends=endpoints(stock,'minutes')
+  timeDF=period.apply(stock[,'dP1'],INDEX=ends,FUN=sum)
+  timeDF$Volume=period.apply(stock[,'SIZE'],INDEX=ends,FUN=sum)
+  Vbar=mean(period.apply(timeDF[,'SIZE'],INDEX=endpoints(timeDF,'days'),
+                         FUN=sum))/Vbucket
+  timeDF$Vfrac=timeDF[,'SIZE']/Vbar
+  timeDF$CumVfrac=cumsum(timeDF[,'Vfrac'])
+  timeDF$Next=(timeDF[,'CumVfrac']-floor(timeDF[,'CumVfrac']))/timeDF[,'Vfrac']
+  timeDF[timeDF[,'Next']<1,'Next']=0
+  timeDF$Previous=lag(timeDF[,'dP1'])*lag(timeDF[,'Next'])
+  timeDF$dP2=(1-timeDF[,'Next'])*timeDF[,'dP1'] + timeDF[,'Previous']
+  timeDF$Vtick=floor(timeDF[,'CumVfrac'])
+  timeDF[,'Vtick']=timeDF[,'Vtick']-diff(timeDF[,'Vtick']); timeDF[1,'Vtick']=0
+  timeDF=as.data.frame(timeDF); timeDF[,'DateTime']=row.names(timeDF)
+  timeDF=ddply(as.data.frame(timeDF),.(Vtick),last)
+  timeDF=as.xts(timeDF[,c('SIZE','dP2','Vtick')],
+                order.by=fastPOSIXct(timeDF$DateTime,tz='GMT'))
+  timeDF[1,'dP2']=0
+  timeDF$sigma=rollapply(timeDF[,'dP2'],Vbucket,sd,fill=NA)
+  timeDF$sigma=na.fill(timeDF$sigma,"extend")
+  timeDF$Vbuy=Vbar*pnorm(timeDF[,'dP2']/timeDF[,'sigma'])
+  timeDF$Vsell=Vbar-timeDF[,'Vbuy']
+  timeDF$OI=abs(timeDF[,'Vsell']-timeDF[,'Vbuy'])
+  timeDF$VPIN=rollapply(timeDF[,'OI'],Vbucket,sum)/(Vbar*Vbucket)
+  timeDF=timeDF[,c('VPIN')]; return(timeDF)
+}
+View(TDtc)
+out=VPIN(TDtc,50)
+
+
+
+####Stats####
+
+mean(TD_liq$`realized spread`)
+
+#### Plots ####
+plot_colours <- c("blue", "red", "forestgreen", "yellow")
+plot_colours1 <- plot_colours[c(1,2)]
+
+plot(c(1:599), TD_liq$`effective spread`[c(1:599)], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=names(TD_liq)[1], col.main="forestgreen", font.main=3)
+title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1], col.lab=rgb(0,0.6,.7))
+
+plot(c(1:length(TD_liq$`realized spread`)), TD_liq$`realized spread`, type="l", col=plot_colours1[1], ann=FALSE)
+title(main=names(TD_liq)[2], col.main="forestgreen", font.main=3)
+title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[2], col.lab=rgb(0,0.6,.7))
+
+plot(c(1:599), TD_liq$`realized spread`[c(1:599)], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=names(TD_liq)[2], col.main="forestgreen", font.main=3)
+title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[2], col.lab=rgb(0,0.6,.7))
+
+plot(c(1:length(TD_liq$`realized spread`)), TD_liq$`proportional effective spread`, type="l", col=plot_colours1[1], ann=FALSE)
+title(main=names(TD_liq)[7], col.main="forestgreen", font.main=3)
+title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[7], col.lab=rgb(0,0.6,.7))
+
+x<-rnorm(2000, 0, 1)
+for (i in c(1:2000)) {
+  x[i]<- 6*pi*i/2000
+}
+y<-x
+for (i in c(1:2000)) {
+  y[i]<-(-1)^i*sin(x[i]-2.5)/(x[i]-2.5)*.4
+}
+
+par(mfrow=c(1,2))
+plot(c(1:599), TD_liq$`realized spread`[c(1:599)], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=names(TD_liq)[2], col.main="forestgreen", font.main=3)
+title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[2], col.lab=rgb(0,0.6,.7))
+plot(x, y, type="l")
