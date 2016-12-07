@@ -241,6 +241,206 @@ setwd("~/Documents")
 write.csv(TD_liq, file = "TD_liq.csv", row.names = T, col.names = T)
 
 
+#### RY Analysis ####
+setwd("~/Documents")
+from <- "2016-08-19"
+to <- "2016-08-31"
+ticker3<-"RY"
+datasource3 <- "~/Documents/RY"
+datadestination3 <- "~/Documents/RYx"
+convert(from=from, to=to, datasource=datasource3, 
+        datadestination=datadestination3, trades = T,  quotes = F, 
+        ticker=ticker3, dir = T, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+convert(from=from, to=to, datasource=datasource3, 
+        datadestination=datadestination3, trades = F,  quotes = T, 
+        ticker=ticker3, dir = F, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+
+
+RYt = TAQLoad(tickers=ticker3, from="2016-08-19", to="2016-08-31", trades=TRUE,
+              quotes=FALSE, datasource= datadestination3)
+RYq = TAQLoad(tickers=ticker3, from="2016-08-19", to="2016-08-31",trades=F,
+              quotes=TRUE, datasource=datadestination3)
+
+RYt<-exchangeHoursOnly(RYt)
+RYq<-exchangeHoursOnly(RYq)
+
+ext<-"N"
+exq<-"Q"
+
+
+
+RYtc<-RYt[ext==RYt$EX,]
+RYqc<-if(is.null(TDq[ext==RYq$EX, ])) {
+  RYq[exq==RYq$EX, ]
+} else {
+  RYq[ext==RYq$EX, ]
+}
+
+RYtc<-noZeroPrices(RYtc)
+RYtc<-salesCondition(RYtc)
+RYtc<-mergeTradesSameTimestamp(RYtc)
+
+RYqc<-noZeroQuotes(RYqc)
+RYqc<-rmLargeSpread(RYqc)
+RYqc<-mergeQuotesSameTimestamp(RYqc)
+RYtc<-tradesCleanupFinal(tdata = RYtc, qdata = RYqc)
+
+
+#### Liquidity Measures ####
+RY_m<-matchTradesQuotes(RYtc, RYqc)
+RYtdir<-getTradeDirection(RY_m)
+
+RY_liq<-matrix(NA, nrow=length(RYtdir), ncol=length(liqtypes))
+
+for (i in c(1:length(liqtypes))) {
+  RY_liq[,i]<-tqLiquidity(RY_m, RYtc, RYqc, type = liqtypes[i])
+}
+
+
+RY_liq<-data.frame(RY_liq)
+names(RY_liq)<- liqtypes2
+row.names(RY_liq)<-row.names(data.frame(RY_m))
+View(RY_liq)
+setwd("~/Documents")
+write.csv(RY_liq, file = "RY_liq.csv", row.names = T, col.names = T)
+
+#### CM Analysis ####
+setwd("~/Documents")
+from <- "2016-08-19"
+to <- "2016-08-31"
+ticker4<-"CM"
+datasource4 <- "~/Documents/CM"
+datadestination4 <- "~/Documents/CMx"
+convert(from=from, to=to, datasource=datasource4, 
+        datadestination=datadestination4, trades = T,  quotes = F, 
+        ticker=ticker4, dir = T, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+convert(from=from, to=to, datasource=datasource4, 
+        datadestination=datadestination4, trades = F,  quotes = T, 
+        ticker=ticker4, dir = F, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+
+
+CMt = TAQLoad(tickers=ticker4, from="2016-08-19", to="2016-08-31", trades=TRUE,
+              quotes=FALSE, datasource= datadestination4)
+CMq = TAQLoad(tickers=ticker4, from="2016-08-19", to="2016-08-31",trades=F,
+              quotes=TRUE, datasource=datadestination4)
+
+CMt<-exchangeHoursOnly(CMt)
+CMq<-exchangeHoursOnly(CMq)
+
+ext<-"N"
+exq<-"Q"
+
+
+
+CMtc<-CMt[ext==CMt$EX,]
+CMqc<-if(is.null(CMq[ext==CMq$EX, ])) {
+  CMq[exq==CMq$EX, ]
+} else {
+  CMq[ext==CMq$EX, ]
+}
+
+CMtc<-noZeroPrices(CMtc)
+CMtc<-salesCondition(CMtc)
+CMtc<-mergeTradesSameTimestamp(CMtc)
+
+CMqc<-noZeroQuotes(CMqc)
+CMqc<-rmLargeSpread(CMqc)
+CMqc<-mergeQuotesSameTimestamp(CMqc)
+CMtc<-tradesCleanupFinal(tdata = CMtc, qdata = CMqc)
+
+#### Liquidity Measures ####
+CM_m<-matchTradesQuotes(CMtc, CMqc)
+CMtdir<-getTradeDirection(CM_m)
+
+CM_liq<-matrix(NA, nrow=length(CMtdir), ncol=length(liqtypes))
+
+for (i in c(1:length(liqtypes))) {
+  CM_liq[,i]<-tqLiquidity(CM_m, CMtc, CMqc, type = liqtypes[i])
+}
+
+
+CM_liq<-data.frame(CM_liq)
+names(CM_liq)<- liqtypes2
+row.names(CM_liq)<-row.names(data.frame(CM_m))
+View(CM_liq)
+setwd("~/Documents")
+write.csv(CM_liq, file = "CM_liq.csv", row.names = T, col.names = T)
+
+#### BNS Analysis ####
+setwd("~/Documents")
+from <- "2016-08-19"
+to <- "2016-08-31"
+ticker5<-"BNS"
+datasource5 <- "~/Documents/BNS"
+datadestination5 <- "~/Documents/BNSx"
+convert(from=from, to=to, datasource=datasource5, 
+        datadestination=datadestination5, trades = T,  quotes = F, 
+        ticker=ticker5, dir = T, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+convert(from=from, to=to, datasource=datasource5, 
+        datadestination=datadestination5, trades = F,  quotes = T, 
+        ticker=ticker5, dir = F, extension = "csv", 
+        header = TRUE, tradecolnames = NULL, quotecolnames = NULL, 
+        format="%Y%m%d %H:%M:%OS", onefile = TRUE )
+
+
+BNSt = TAQLoad(tickers=ticker5, from="2016-08-19", to="2016-08-31", trades=TRUE,
+              quotes=FALSE, datasource= datadestination5)
+BNSq = TAQLoad(tickers=ticker5, from="2016-08-19", to="2016-08-31",trades=F,
+              quotes=TRUE, datasource=datadestination5)
+
+BNSt<-exchangeHoursOnly(BNSt)
+BNSq<-exchangeHoursOnly(BNSq)
+
+ext<-"N"
+exq<-"Q"
+
+
+
+BNStc<-BNSt[ext==BNSt$EX,]
+BNSqc<-if(is.null(BNSq[ext==BNSq$EX, ])) {
+  BNSq[exq==BNSq$EX, ]
+} else {
+  BNSq[ext==BNSq$EX, ]
+}
+
+BNStc<-noZeroPrices(BNStc)
+BNStc<-salesCondition(BNStc)
+BNStc<-mergeTradesSameTimestamp(BNStc)
+
+BNSqc<-noZeroQuotes(BNSqc)
+BNSqc<-rmLargeSpread(BNSqc)
+BNSqc<-mergeQuotesSameTimestamp(BNSqc)
+BNStc<-tradesCleanupFinal(tdata = BNStc, qdata = BNSqc)
+
+#### Liquidity Measures ####
+BNS_m<-matchTradesQuotes(BNStc, BNSqc)
+BNStdir<-getTradeDirection(BNS_m)
+
+BNS_liq<-matrix(NA, nrow=length(BNStdir), ncol=length(liqtypes))
+
+for (i in c(1:length(liqtypes))) {
+  BNS_liq[,i]<-tqLiquidity(BNS_m, BNStc, BNSqc, type = liqtypes[i])
+}
+
+
+BNS_liq<-data.frame(BNS_liq)
+names(BNS_liq)<- liqtypes2
+row.names(BNS_liq)<-row.names(data.frame(BNS_m))
+View(BNS_liq)
+setwd("~/Documents")
+write.csv(BNS_liq, file = "BNS_liq.csv", row.names = T, col.names = T)
+
+
 #### VPIN Calculations ####
 
 #Define Vector that computes unique days & # of days in each interval
@@ -315,15 +515,18 @@ write.csv(BB, file = "TD_par.csv", row.names = F, col.names = T)
 
 #VPIN
 
+stock<-as.xts(TDtc[,c(3,4)])
+View(stock)
+names(stock)<-c("Price", "Volume")
 
 VPIN=function(stock,Vbucket) {
-  stock$dP1=diff(stock[,'PRICE'],lag=1,diff=1,na.pad=TRUE)
+  stock$dP1=diff(stock[,'Price'],lag=1,diff=1,na.pad=TRUE)
   ends=endpoints(stock,'minutes')
   timeDF=period.apply(stock[,'dP1'],INDEX=ends,FUN=sum)
-  timeDF$Volume=period.apply(stock[,'SIZE'],INDEX=ends,FUN=sum)
-  Vbar=mean(period.apply(timeDF[,'SIZE'],INDEX=endpoints(timeDF,'days'),
+  timeDF$Volume=period.apply(stock[,'Volume'],INDEX=ends,FUN=sum)
+  Vbar=mean(period.apply(timeDF[,'Volume'],INDEX=endpoints(timeDF,'days'),
                          FUN=sum))/Vbucket
-  timeDF$Vfrac=timeDF[,'SIZE']/Vbar
+  timeDF$Vfrac=timeDF[,'Volume']/Vbar
   timeDF$CumVfrac=cumsum(timeDF[,'Vfrac'])
   timeDF$Next=(timeDF[,'CumVfrac']-floor(timeDF[,'CumVfrac']))/timeDF[,'Vfrac']
   timeDF[timeDF[,'Next']<1,'Next']=0
@@ -333,7 +536,7 @@ VPIN=function(stock,Vbucket) {
   timeDF[,'Vtick']=timeDF[,'Vtick']-diff(timeDF[,'Vtick']); timeDF[1,'Vtick']=0
   timeDF=as.data.frame(timeDF); timeDF[,'DateTime']=row.names(timeDF)
   timeDF=ddply(as.data.frame(timeDF),.(Vtick),last)
-  timeDF=as.xts(timeDF[,c('SIZE','dP2','Vtick')],
+  timeDF=as.xts(timeDF[,c('Volume','dP2','Vtick')],
                 order.by=fastPOSIXct(timeDF$DateTime,tz='GMT'))
   timeDF[1,'dP2']=0
   timeDF$sigma=rollapply(timeDF[,'dP2'],Vbucket,sd,fill=NA)
@@ -344,6 +547,35 @@ VPIN=function(stock,Vbucket) {
   timeDF$VPIN=rollapply(timeDF[,'OI'],Vbucket,sum)/(Vbar*Vbucket)
   timeDF=timeDF[,c('VPIN')]; return(timeDF)
 }
+
+stock$dP1=diff(stock[,'Price'],lag=1,diff=1,na.pad=TRUE)
+ends=endpoints(stock,'minutes')
+timeDF=period.apply(stock[,'dP1'],INDEX=ends,FUN=sum)
+timeDF$Volume=period.apply(stock[,'Volume'],INDEX=ends,FUN=sum)
+Vbar=mean(period.apply(timeDF[,'Volume'],INDEX=endpoints(timeDF,'days'),
+                       FUN=sum))/Vbucket
+timeDF$Vfrac=timeDF[,'Volume']/Vbar
+timeDF$CumVfrac=cumsum(timeDF[,'Vfrac'])
+timeDF$Next=(timeDF[,'CumVfrac']-floor(timeDF[,'CumVfrac']))/timeDF[,'Vfrac']
+timeDF[timeDF[,'Next']<1,'Next']=0
+timeDF$Previous=lag(timeDF[,'dP1'])*lag(timeDF[,'Next'])
+timeDF$dP2=(1-timeDF[,'Next'])*timeDF[,'dP1'] + timeDF[,'Previous']
+timeDF$Vtick=floor(timeDF[,'CumVfrac'])
+timeDF[,'Vtick']=timeDF[,'Vtick']-diff(timeDF[,'Vtick']); timeDF[1,'Vtick']=0
+timeDF=as.data.frame(timeDF); timeDF[,'DateTime']=row.names(timeDF)
+timeDF=ddply(as.data.frame(timeDF),.(Vtick),last)
+timeDF=as.xts(timeDF[,c('Volume','dP2','Vtick')],
+              order.by=fastPOSIXct(timeDF$DateTime,tz='GMT'))
+timeDF[1,'dP2']=0
+timeDF$sigma=rollapply(timeDF[,'dP2'],Vbucket,sd,fill=NA)
+timeDF$sigma=na.fill(timeDF$sigma,"extend")
+timeDF$Vbuy=Vbar*pnorm(timeDF[,'dP2']/timeDF[,'sigma'])
+timeDF$Vsell=Vbar-timeDF[,'Vbuy']
+timeDF$OI=abs(timeDF[,'Vsell']-timeDF[,'Vbuy'])
+timeDF$VPIN=rollapply(timeDF[,'OI'],Vbucket,sum)/(Vbar*Vbucket)
+timeDF=timeDF[,c('VPIN')]; return(timeDF)
+
+out=VPIN(stock,50)
 View(TDtc)
 out=VPIN(TDtc,50)
 
