@@ -443,7 +443,7 @@ write.csv(BNS_liq, file = "BNS_liq.csv", row.names = T, col.names = T)
 
 #### VPIN Calculations ####
 
-#Define Vector that computes unique days & # of days in each interval
+#Define Vector that computes days data TD
 
 TDqc.df <- data.frame(date=index(TDqc), coredata(TDqc))
 
@@ -459,6 +459,75 @@ for (i in c(2:length(TD_udays))) {
 TD_daysc<-c(1,TD_daysc)
 TD_daysc
 
+#Define Vector that computes days data RY
+
+RYqc.df <- data.frame(date=index(RYqc), coredata(RYqc))
+
+RY_udays<-(unique(as.Date(RYqc.df$date)))
+RY_days<-c(1:length(RY_udays))
+for (i in c(1:length(TD_udays))) {
+  RY_days[i]<-sum(as.Date(RYqc.df$date)==RY_udays[i])
+}
+RY_daysc<-RY_days
+for (i in c(2:length(RY_udays))) {
+  RY_daysc[i]<-RY_daysc[i]+RY_daysc[i-1]
+}
+RY_daysc<-c(1,RY_daysc)
+RY_daysc
+
+#Define Vector that computes days data BMO
+
+BMOqc.df <- data.frame(date=index(BMOqc), coredata(BMOqc))
+
+BMO_udays<-(unique(as.Date(BMOqc.df$date)))
+BMO_days<-c(1:length(BMO_udays))
+for (i in c(1:length(BMO_udays))) {
+  BMO_days[i]<-sum(as.Date(BMOqc.df$date)==BMO_udays[i])
+}
+BMO_daysc<-BMO_days
+for (i in c(2:length(BMO_udays))) {
+  BMO_daysc[i]<-BMO_daysc[i]+BMO_daysc[i-1]
+}
+BMO_daysc<-c(1,BMO_daysc)
+BMO_daysc
+
+#Define Vector that computes days data CM
+
+CMqc.df <- data.frame(date=index(CMqc), coredata(CMqc))
+
+CM_udays<-(unique(as.Date(CMqc.df$date)))
+CM_days<-c(1:length(CM_udays))
+for (i in c(1:length(CM_udays))) {
+  CM_days[i]<-sum(as.Date(CMqc.df$date)==CM_udays[i])
+}
+CM_daysc<-CM_days
+for (i in c(2:length(CM_udays))) {
+  CM_daysc[i]<-CM_daysc[i]+CM_daysc[i-1]
+}
+CM_daysc<-c(1,CM_daysc)
+CM_daysc
+
+#Define Vector that computes days data BNS
+
+BNSqc.df <- data.frame(date=index(BNSqc), coredata(BNSqc))
+
+BNS_udays<-(unique(as.Date(BNSqc.df$date)))
+BNS_days<-c(1:length(BNS_udays))
+for (i in c(1:length(BNS_udays))) {
+  BNS_days[i]<-sum(as.Date(BNSqc.df$date)==BNS_udays[i])
+}
+BNS_daysc<-BNS_days
+for (i in c(2:length(BNS_udays))) {
+  BNS_daysc[i]<-BNS_daysc[i]+BNS_daysc[i-1]
+}
+BNS_daysc<-c(1,BNS_daysc)
+BNS_daysc
+
+
+
+
+
+
 #Manipulate Data Frame
 TD_date<-as.Date(TDqc.df$date)
 TD_time<-strftime(TDqc.df$date, format="%H:%M:%S", tz= "GMT")
@@ -466,7 +535,87 @@ TDqc.df<-data.frame(TDqc.df, TD_date, TD_time)
 TDqc.df$BID<-as.numeric(levels(TDqc.df$BID))[TDqc.df$BID]
 TDqc.df$OFR<-as.numeric(levels(TDqc.df$OFR))[TDqc.df$OFR]
 
-#PIN
+#### GRAPH VECTORS ####
+
+
+TD_liqdays<-c(1:length(TD_udays))
+for (i in c(1:length(TD_udays))) {
+  TD_days[i]<-sum(as.Date(TDqc.df$date)==TD_udays[i])
+}
+TD_daysc<-TD_days
+for (i in c(2:length(TD_udays))) {
+  TD_daysc[i]<-TD_daysc[i]+TD_daysc[i-1]
+}
+TD_daysc<-c(1,TD_daysc)
+TD_daysc
+
+#Define Vector that computes days data RY
+
+RYqc.df <- data.frame(date=index(RYqc), coredata(RYqc))
+
+RY_udays<-(unique(as.Date(RYqc.df$date)))
+RY_days<-c(1:length(RY_udays))
+for (i in c(1:length(TD_udays))) {
+  RY_days[i]<-sum(as.Date(RYqc.df$date)==RY_udays[i])
+}
+RY_daysc<-RY_days
+for (i in c(2:length(RY_udays))) {
+  RY_daysc[i]<-RY_daysc[i]+RY_daysc[i-1]
+}
+RY_daysc<-c(1,RY_daysc)
+RY_daysc
+
+
+#Define Vector that computes days data BMO
+
+BMOqc.df <- data.frame(date=index(BMOqc), coredata(BMOqc))
+
+BMO_udays<-(unique(as.Date(BMOqc.df$date)))
+BMO_days<-c(1:length(BMO_udays))
+for (i in c(1:length(BMO_udays))) {
+  BMO_days[i]<-sum(as.Date(BMOqc.df$date)==BMO_udays[i])
+}
+BMO_daysc<-BMO_days
+for (i in c(2:length(BMO_udays))) {
+  BMO_daysc[i]<-BMO_daysc[i]+BMO_daysc[i-1]
+}
+BMO_daysc<-c(1,BMO_daysc)
+BMO_daysc
+
+#Define Vector that computes days data CM
+
+CMqc.df <- data.frame(date=index(CMqc), coredata(CMqc))
+
+CM_udays<-(unique(as.Date(CMqc.df$date)))
+CM_days<-c(1:length(CM_udays))
+for (i in c(1:length(CM_udays))) {
+  CM_days[i]<-sum(as.Date(CMqc.df$date)==CM_udays[i])
+}
+CM_daysc<-CM_days
+for (i in c(2:length(CM_udays))) {
+  CM_daysc[i]<-CM_daysc[i]+CM_daysc[i-1]
+}
+CM_daysc<-c(1,CM_daysc)
+CM_daysc
+
+#Define Vector that computes days data BNS
+
+BNSqc.df <- data.frame(date=index(BNSqc), coredata(BNSqc))
+
+BNS_udays<-(unique(as.Date(BNSqc.df$date)))
+BNS_days<-c(1:length(BNS_udays))
+for (i in c(1:length(BNS_udays))) {
+  BNS_days[i]<-sum(as.Date(BNSqc.df$date)==BNS_udays[i])
+}
+BNS_daysc<-BNS_days
+for (i in c(2:length(BNS_udays))) {
+  BNS_daysc[i]<-BNS_daysc[i]+BNS_daysc[i-1]
+}
+BNS_daysc<-c(1,BNS_daysc)
+BNS_daysc
+
+#PIN for TD
+
 
 a1<-classify_quotes(TDqc.df[c(TD_daysc[1]:TD_daysc[2]), c(4,6)], 1, 2, TD_udays[1])
 a2<-classify_quotes(TDqc.df[c(TD_daysc[2]:TD_daysc[3]), c(4,6)], 1, 2, TD_udays[2])
@@ -477,7 +626,6 @@ a6<-classify_quotes(TDqc.df[c(TD_daysc[6]:TD_daysc[7]), c(4,6)], 1, 2, TD_udays[
 a7<-classify_quotes(TDqc.df[c(TD_daysc[7]:TD_daysc[8]), c(4,6)], 1, 2, TD_udays[7])
 a8<-classify_quotes(TDqc.df[c(TD_daysc[8]:TD_daysc[9]), c(4,6)], 1, 2, TD_udays[8])
 a9<-classify_quotes(TDqc.df[c(TD_daysc[9]:TD_daysc[10]), c(4,6)], 1, 2, TD_udays[9])
-a1
 
 AA<-data.frame(c(a1$no_trades, a1$sell_trades, a1$buy_trades), 
                c(a2$no_trades, a2$sell_trades, a2$buy_trades), 
@@ -511,6 +659,57 @@ BB<-data.frame(b1$par, b2$par, b3$par, b4$par, b5$par, b6$par, b7$par, b8$par, b
 View(BB)
 names(BB)<-TD_udays
 write.csv(BB, file = "TD_par.csv", row.names = F, col.names = T)
+
+#PIN for RY
+
+#Manipulate Data Frame
+RY_date<-as.Date(RYqc.df$date)
+RY_time<-strftime(RYqc.df$date, format="%H:%M:%S", tz= "GMT")
+RYqc.df<-data.frame(RYqc.df, RY_date, RY_time)
+RYqc.df$BID<-as.numeric(levels(RYqc.df$BID))[RYqc.df$BID]
+RYqc.df$OFR<-as.numeric(levels(RYqc.df$OFR))[RYqc.df$OFR]
+
+a11<-classify_quotes(TDqc.df[c(RY_daysc[1]:RY_daysc[2]), c(4,6)], 1, 2, RY_udays[1])
+a21<-classify_quotes(TDqc.df[c(RY_daysc[2]:RY_daysc[3]), c(4,6)], 1, 2, RY_udays[2])
+a31<-classify_quotes(TDqc.df[c(RY_daysc[3]:RY_daysc[4]), c(4,6)], 1, 2, RY_udays[3])
+a41<-classify_quotes(TDqc.df[c(RY_daysc[4]:RY_daysc[5]), c(4,6)], 1, 2, RY_udays[4])
+a51<-classify_quotes(TDqc.df[c(RY_daysc[5]:RY_daysc[6]), c(4,6)], 1, 2, RY_udays[5])
+a61<-classify_quotes(TDqc.df[c(RY_daysc[6]:RY_daysc[7]), c(4,6)], 1, 2, RY_udays[6])
+a71<-classify_quotes(TDqc.df[c(RY_daysc[7]:RY_daysc[8]), c(4,6)], 1, 2, RY_udays[7])
+a81<-classify_quotes(TDqc.df[c(RY_daysc[8]:RY_daysc[9]), c(4,6)], 1, 2, RY_udays[8])
+a91<-classify_quotes(TDqc.df[c(RY_daysc[9]:RY_daysc[10]), c(4,6)], 1, 2, RY_udays[9])
+
+AA1<-data.frame(c(a11$no_trades, a11$sell_trades, a11$buy_trades), 
+               c(a21$no_trades, a21$sell_trades, a21$buy_trades), 
+               c(a31$no_trades, a31$sell_trades, a31$buy_trades),
+               c(a41$no_trades, a41$sell_trades, a41$buy_trades), 
+               c(a51$no_trades, a51$sell_trades, a51$buy_trades),
+               c(a61$no_trades, a61$sell_trades, a61$buy_trades), 
+               c(a71$no_trades, a71$sell_trades, a71$buy_trades), 
+               c(a81$no_trades, a81$sell_trades, a81$buy_trades), 
+               c(a91$no_trades, a91$sell_trades, a91$buy_trades))
+
+names(AA1)<-RY_udays
+row.names(AA1)<-c("no_trades", "sell_trades", "buy_trades")
+write.csv(AA1, file = "RY_PINInfo.csv", row.names = F, col.names = T)
+
+#Make a starting guess at the solution
+par0 <- c(0.5, 0.5, 0.5, 0.5)
+
+#Calc optimum parameters
+b11<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[1]:RY_daysc[2]), c(4,6)])
+b21<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[2]:RY_daysc[3]), c(4,6)])
+b31<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[3]:RY_daysc[4]), c(4,6)])
+b41<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[4]:RY_daysc[5]), c(4,6)])
+b51<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[5]:RY_daysc[6]), c(4,6)])
+b61<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[6]:RY_daysc[7]), c(4,6)])
+b71<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[7]:RY_daysc[8]), c(4,6)])
+b81<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[8]:RY_daysc[9]), c(4,6)])
+b91<-optim(par0, pin_likelihood, gr=NULL, RYqc.df[c(RY_daysc[9]:RY_daysc[10]), c(4,6)])
+
+BB1<-data.frame(b11$par, b21$par, b31$par, b41$par, b51$par, b61$par, b71$par, b81$par, b91$par)
+names(BB1)<-RY_udays
+write.csv(BB1, file = "RY_par.csv", row.names = F, col.names = T)
 
 
 #VPIN
@@ -585,14 +784,170 @@ out=VPIN(TDtc,50)
 
 mean(TD_liq$`realized spread`)
 
-#### Plots ####
+#### Days for Graphs ####
+View(TD_liq)
+TDliq.df<-data.frame(date=index(TD), coredata(RYqc))
+TD_liqdays<-c(1:length(TD_udays))
+for (i in c(1:length(TD_udays))) {
+  TD_liqdays[i]<-sum(as.Date(TDqc.df$date)==TD_udays[i])
+}
+TD_daysc<-TD_days
+for (i in c(2:length(TD_udays))) {
+  TD_daysc[i]<-TD_daysc[i]+TD_daysc[i-1]
+}
+TD_daysc<-c(1,TD_daysc)
+TD_daysc
+
+#Define Vector that computes days data RY
+
+RYqc.df <- data.frame(date=index(RYqc), coredata(RYqc))
+
+RY_udays<-(unique(as.Date(RYqc.df$date)))
+RY_days<-c(1:length(RY_udays))
+for (i in c(1:length(TD_udays))) {
+  RY_days[i]<-sum(as.Date(RYqc.df$date)==RY_udays[i])
+}
+RY_daysc<-RY_days
+for (i in c(2:length(RY_udays))) {
+  RY_daysc[i]<-RY_daysc[i]+RY_daysc[i-1]
+}
+RY_daysc<-c(1,RY_daysc)
+RY_daysc
+
+
+#Define Vector that computes days data BMO
+
+BMOqc.df <- data.frame(date=index(BMOqc), coredata(BMOqc))
+
+BMO_udays<-(unique(as.Date(BMOqc.df$date)))
+BMO_days<-c(1:length(BMO_udays))
+for (i in c(1:length(BMO_udays))) {
+  BMO_days[i]<-sum(as.Date(BMOqc.df$date)==BMO_udays[i])
+}
+BMO_daysc<-BMO_days
+for (i in c(2:length(BMO_udays))) {
+  BMO_daysc[i]<-BMO_daysc[i]+BMO_daysc[i-1]
+}
+BMO_daysc<-c(1,BMO_daysc)
+BMO_daysc
+
+#Define Vector that computes days data CM
+
+CMqc.df <- data.frame(date=index(CMqc), coredata(CMqc))
+
+CM_udays<-(unique(as.Date(CMqc.df$date)))
+CM_days<-c(1:length(CM_udays))
+for (i in c(1:length(CM_udays))) {
+  CM_days[i]<-sum(as.Date(CMqc.df$date)==CM_udays[i])
+}
+CM_daysc<-CM_days
+for (i in c(2:length(CM_udays))) {
+  CM_daysc[i]<-CM_daysc[i]+CM_daysc[i-1]
+}
+CM_daysc<-c(1,CM_daysc)
+CM_daysc
+
+#Define Vector that computes days data BNS
+
+BNSqc.df <- data.frame(date=index(BNSqc), coredata(BNSqc))
+
+BNS_udays<-(unique(as.Date(BNSqc.df$date)))
+BNS_days<-c(1:length(BNS_udays))
+for (i in c(1:length(BNS_udays))) {
+  BNS_days[i]<-sum(as.Date(BNSqc.df$date)==BNS_udays[i])
+}
+BNS_daysc<-BNS_days
+for (i in c(2:length(BNS_udays))) {
+  BNS_daysc[i]<-BNS_daysc[i]+BNS_daysc[i-1]
+}
+BNS_daysc<-c(1,BNS_daysc)
+BNS_daysc
+
+TD_liqdays<-c(1:length(TD_udays))
+for (i in c(1:length(TD_udays))) {
+  TD_days[i]<-sum(as.Date(TDqc.df$date)==TD_udays[i])
+}
+TD_daysc<-TD_days
+for (i in c(2:length(TD_udays))) {
+  TD_daysc[i]<-TD_daysc[i]+TD_daysc[i-1]
+}
+TD_daysc<-c(1,TD_daysc)
+TD_daysc
+
+#Define Vector that computes days data RY
+
+RYqc.df <- data.frame(date=index(RYqc), coredata(RYqc))
+
+RY_udays<-(unique(as.Date(RYqc.df$date)))
+RY_days<-c(1:length(RY_udays))
+for (i in c(1:length(TD_udays))) {
+  RY_days[i]<-sum(as.Date(RYqc.df$date)==RY_udays[i])
+}
+RY_daysc<-RY_days
+for (i in c(2:length(RY_udays))) {
+  RY_daysc[i]<-RY_daysc[i]+RY_daysc[i-1]
+}
+RY_daysc<-c(1,RY_daysc)
+RY_daysc
+
+
+#Define Vector that computes days data BMO
+
+BMOqc.df <- data.frame(date=index(BMOqc), coredata(BMOqc))
+
+BMO_udays<-(unique(as.Date(BMOqc.df$date)))
+BMO_days<-c(1:length(BMO_udays))
+for (i in c(1:length(BMO_udays))) {
+  BMO_days[i]<-sum(as.Date(BMOqc.df$date)==BMO_udays[i])
+}
+BMO_daysc<-BMO_days
+for (i in c(2:length(BMO_udays))) {
+  BMO_daysc[i]<-BMO_daysc[i]+BMO_daysc[i-1]
+}
+BMO_daysc<-c(1,BMO_daysc)
+BMO_daysc
+
+#Define Vector that computes days data CM
+
+CMqc.df <- data.frame(date=index(CMqc), coredata(CMqc))
+
+CM_udays<-(unique(as.Date(CMqc.df$date)))
+CM_days<-c(1:length(CM_udays))
+for (i in c(1:length(CM_udays))) {
+  CM_days[i]<-sum(as.Date(CMqc.df$date)==CM_udays[i])
+}
+CM_daysc<-CM_days
+for (i in c(2:length(CM_udays))) {
+  CM_daysc[i]<-CM_daysc[i]+CM_daysc[i-1]
+}
+CM_daysc<-c(1,CM_daysc)
+CM_daysc
+
+#Define Vector that computes days data BNS
+
+BNSqc.df <- data.frame(date=index(BNSqc), coredata(BNSqc))
+
+BNS_udays<-(unique(as.Date(BNSqc.df$date)))
+BNS_days<-c(1:length(BNS_udays))
+for (i in c(1:length(BNS_udays))) {
+  BNS_days[i]<-sum(as.Date(BNSqc.df$date)==BNS_udays[i])
+}
+BNS_daysc<-BNS_days
+for (i in c(2:length(BNS_udays))) {
+  BNS_daysc[i]<-BNS_daysc[i]+BNS_daysc[i-1]
+}
+BNS_daysc<-c(1,BNS_daysc)
+BNS_daysc
+
 plot_colours <- c("blue", "red", "forestgreen", "yellow")
 plot_colours1 <- plot_colours[c(1,2)]
 
-plot(c(1:599), TD_liq$`effective spread`[c(1:599)], type="l", col=plot_colours1[1], ann=FALSE)
-title(main=names(TD_liq)[1], col.main="forestgreen", font.main=3)
+plot(c(1:599), TD_liq$`effective spread`[c(TD_daysc[1]:TD_daysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
 title(xlab="Date", col.lab=rgb(0,0.6,.7))
-title(ylab=names(TD_liq)[1], col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+
 
 plot(c(1:length(TD_liq$`realized spread`)), TD_liq$`realized spread`, type="l", col=plot_colours1[1], ann=FALSE)
 title(main=names(TD_liq)[2], col.main="forestgreen", font.main=3)
