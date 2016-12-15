@@ -1,4 +1,3 @@
-install.packages("FinAsym")
 library(zoo)
 library(xts)
 library(highfrequency)
@@ -711,6 +710,74 @@ BB1<-data.frame(b11$par, b21$par, b31$par, b41$par, b51$par, b61$par, b71$par, b
 names(BB1)<-RY_udays
 write.csv(BB1, file = "RY_par.csv", row.names = F, col.names = T)
 
+par0 <- c(0.2, 0.2, 0.2, 0.2)
+
+#Calc optimum parameters
+
+BMO_date<-as.Date(BMOqc.df$date)
+BMO_time<-strftime(BMOqc.df$date, format="%H:%M:%S", tz= "GMT")
+BMOqc.df<-data.frame(BMOqc.df, BMO_date, BMO_time)
+BMOqc.df$BID<-as.numeric(levels(BMOqc.df$BID))[BMOqc.df$BID]
+BMOqc.df$OFR<-as.numeric(levels(BMOqc.df$OFR))[BMOqc.df$OFR]
+
+b12<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[1]:BMO_daysc[2]), c(4,6)])
+b22<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[2]:BMO_daysc[3]), c(4,6)])
+b32<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[3]:BMO_daysc[4]), c(4,6)])
+b42<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[4]:BMO_daysc[5]), c(4,6)])
+b52<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[5]:BMO_daysc[6]), c(4,6)])
+b62<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[6]:BMO_daysc[7]), c(4,6)])
+b72<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[7]:BMO_daysc[8]), c(4,6)])
+b82<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[8]:BMO_daysc[9]), c(4,6)])
+b92<-optim(par0, pin_likelihood, gr=NULL, BMOqc.df[c(BMO_daysc[9]:BMO_daysc[10]), c(4,6)])
+
+BB2<-data.frame(b12$par, b22$par, b32$par, b42$par, b52$par, b62$par, b72$par, b82$par, b92$par)
+names(BB2)<-BMO_udays
+write.csv(BB2, file = "BMO_par.csv", row.names = F, col.names = T)
+
+par0 <- c(0.2, 0.2, 0.2, 0.2)
+
+#Calc optimum parameters
+
+CM_date<-as.Date(CMqc.df$date)
+CM_time<-strftime(CMqc.df$date, format="%H:%M:%S", tz= "GMT")
+CMqc.df<-data.frame(CMqc.df, CM_date, CM_time)
+CMqc.df$BID<-as.numeric(levels(CMqc.df$BID))[CMqc.df$BID]
+CMqc.df$OFR<-as.numeric(levels(CMqc.df$OFR))[CMqc.df$OFR]
+
+b12<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[1]:CM_daysc[2]), c(4,6)])
+b22<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[2]:CM_daysc[3]), c(4,6)])
+b32<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[3]:CM_daysc[4]), c(4,6)])
+b42<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[4]:CM_daysc[5]), c(4,6)])
+b52<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[5]:CM_daysc[6]), c(4,6)])
+b62<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[6]:CM_daysc[7]), c(4,6)])
+b72<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[7]:CM_daysc[8]), c(4,6)])
+b82<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[8]:CM_daysc[9]), c(4,6)])
+b92<-optim(par0, pin_likelihood, gr=NULL, CMqc.df[c(CM_daysc[9]:CM_daysc[10]), c(4,6)])
+
+BB2<-data.frame(b12$par, b22$par, b32$par, b42$par, b52$par, b62$par, b72$par, b82$par, b92$par)
+names(BB2)<-CM_udays
+write.csv(BB2, file = "CM_par.csv", row.names = F, col.names = T)
+
+BNS_date<-as.Date(BNSqc.df$date)
+BNS_time<-strftime(BNSqc.df$date, format="%H:%M:%S", tz= "GMT")
+BNSqc.df<-data.frame(BNSqc.df, BNS_date, BNS_time)
+BNSqc.df$BID<-as.numeric(levels(BNSqc.df$BID))[BNSqc.df$BID]
+BNSqc.df$OFR<-as.numeric(levels(BNSqc.df$OFR))[BNSqc.df$OFR]
+
+b12<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[1]:BNS_daysc[2]), c(4,6)])
+b22<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[2]:BNS_daysc[3]), c(4,6)])
+b32<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[3]:BNS_daysc[4]), c(4,6)])
+b42<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[4]:BNS_daysc[5]), c(4,6)])
+b52<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[5]:BNS_daysc[6]), c(4,6)])
+b62<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[6]:BNS_daysc[7]), c(4,6)])
+b72<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[7]:BNS_daysc[8]), c(4,6)])
+b82<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[8]:BNS_daysc[9]), c(4,6)])
+b92<-optim(par0, pin_likelihood, gr=NULL, BNSqc.df[c(CM_daysc[9]:BNS_daysc[10]), c(4,6)])
+
+BB2<-data.frame(b12$par, b22$par, b32$par, b42$par, b52$par, b62$par, b72$par, b82$par, b92$par)
+names(BB2)<-BNS_udays
+write.csv(BB2, file = "BNS_par.csv", row.names = F, col.names = T)
+
 
 #VPIN
 
@@ -785,83 +852,88 @@ out=VPIN(TDtc,50)
 mean(TD_liq$`realized spread`)
 
 #### Days for Graphs ####
-View(TD_liq)
-TDliq.df<-data.frame(date=index(TD), coredata(RYqc))
+View(TD_liq.df)
+TD_liq.df<-data.frame(date=as.Date(row.names(TD_liq)), coredata(TD_liq))
+TD_udays<-(unique(as.Date(TDqc.df$date)))
 TD_liqdays<-c(1:length(TD_udays))
 for (i in c(1:length(TD_udays))) {
-  TD_liqdays[i]<-sum(as.Date(TDqc.df$date)==TD_udays[i])
+  TD_liqdays[i]<-sum(as.Date(TD_liq.df$date)==TD_udays[i])
 }
-TD_daysc<-TD_days
-for (i in c(2:length(TD_udays))) {
-  TD_daysc[i]<-TD_daysc[i]+TD_daysc[i-1]
+TD_liqdaysc<-TD_liqdays
+for (i in c(2:length(TD_liqdays))) {
+  TD_liqdaysc[i]<-TD_liqdaysc[i]+TD_liqdaysc[i-1]
 }
-TD_daysc<-c(1,TD_daysc)
-TD_daysc
+TD_liqdaysc<-c(1,TD_liqdaysc)
+TD_liqdaysc
 
 #Define Vector that computes days data RY
 
-RYqc.df <- data.frame(date=index(RYqc), coredata(RYqc))
-
+View(RY_liq.df)
+RY_liq.df<-data.frame(date=as.Date(row.names(RY_liq)), coredata(RY_liq))
 RY_udays<-(unique(as.Date(RYqc.df$date)))
-RY_days<-c(1:length(RY_udays))
-for (i in c(1:length(TD_udays))) {
-  RY_days[i]<-sum(as.Date(RYqc.df$date)==RY_udays[i])
+RY_liqdays<-c(1:length(RY_udays))
+for (i in c(1:length(RY_udays))) {
+  RY_liqdays[i]<-sum(as.Date(RY_liq.df$date)==RY_udays[i])
 }
-RY_daysc<-RY_days
-for (i in c(2:length(RY_udays))) {
-  RY_daysc[i]<-RY_daysc[i]+RY_daysc[i-1]
+RY_liqdaysc<-RY_liqdays
+for (i in c(2:length(RY_liqdays))) {
+  RY_liqdaysc[i]<-RY_liqdaysc[i]+RY_liqdaysc[i-1]
 }
-RY_daysc<-c(1,RY_daysc)
-RY_daysc
+RY_liqdaysc<-c(1,RY_liqdaysc)
+RY_liqdaysc
 
 
 #Define Vector that computes days data BMO
 
 BMOqc.df <- data.frame(date=index(BMOqc), coredata(BMOqc))
 
+BMO_liq.df<-data.frame(date=as.Date(row.names(BMO_liq)), coredata(BMO_liq))
 BMO_udays<-(unique(as.Date(BMOqc.df$date)))
-BMO_days<-c(1:length(BMO_udays))
+BMO_liqdays<-c(1:length(BMO_udays))
 for (i in c(1:length(BMO_udays))) {
-  BMO_days[i]<-sum(as.Date(BMOqc.df$date)==BMO_udays[i])
+  BMO_liqdays[i]<-sum(as.Date(BMO_liq.df$date)==BMO_udays[i])
 }
-BMO_daysc<-BMO_days
-for (i in c(2:length(BMO_udays))) {
-  BMO_daysc[i]<-BMO_daysc[i]+BMO_daysc[i-1]
+BMO_liqdaysc<-BMO_liqdays
+for (i in c(2:length(BMO_liqdays))) {
+  BMO_liqdaysc[i]<-BMO_liqdaysc[i]+BMO_liqdaysc[i-1]
 }
-BMO_daysc<-c(1,BMO_daysc)
-BMO_daysc
+BMO_liqdaysc<-c(1,BMO_liqdaysc)
+BMO_liqdaysc
+
 
 #Define Vector that computes days data CM
 
 CMqc.df <- data.frame(date=index(CMqc), coredata(CMqc))
 
+CM_liq.df<-data.frame(date=as.Date(row.names(CM_liq)), coredata(CM_liq))
 CM_udays<-(unique(as.Date(CMqc.df$date)))
-CM_days<-c(1:length(CM_udays))
+CM_liqdays<-c(1:length(CM_udays))
 for (i in c(1:length(CM_udays))) {
-  CM_days[i]<-sum(as.Date(CMqc.df$date)==CM_udays[i])
+  CM_liqdays[i]<-sum(as.Date(CM_liq.df$date)==CM_udays[i])
 }
-CM_daysc<-CM_days
-for (i in c(2:length(CM_udays))) {
-  CM_daysc[i]<-CM_daysc[i]+CM_daysc[i-1]
+CM_liqdaysc<-CM_liqdays
+for (i in c(2:length(CM_liqdays))) {
+  CM_liqdaysc[i]<-CM_liqdaysc[i]+CM_liqdaysc[i-1]
 }
-CM_daysc<-c(1,CM_daysc)
-CM_daysc
+CM_liqdaysc<-c(1,CM_liqdaysc)
+CM_liqdaysc
 
 #Define Vector that computes days data BNS
 
 BNSqc.df <- data.frame(date=index(BNSqc), coredata(BNSqc))
 
+BNS_liq.df<-data.frame(date=as.Date(row.names(BNS_liq)), coredata(BNS_liq))
 BNS_udays<-(unique(as.Date(BNSqc.df$date)))
-BNS_days<-c(1:length(BNS_udays))
+BNS_liqdays<-c(1:length(BNS_udays))
 for (i in c(1:length(BNS_udays))) {
-  BNS_days[i]<-sum(as.Date(BNSqc.df$date)==BNS_udays[i])
+  BNS_liqdays[i]<-sum(as.Date(BNS_liq.df$date)==BNS_udays[i])
 }
-BNS_daysc<-BNS_days
-for (i in c(2:length(BNS_udays))) {
-  BNS_daysc[i]<-BNS_daysc[i]+BNS_daysc[i-1]
+BNS_liqdaysc<-BNS_liqdays
+for (i in c(2:length(BNS_liqdays))) {
+  BNS_liqdaysc[i]<-BNS_liqdaysc[i]+BNS_liqdaysc[i-1]
 }
-BNS_daysc<-c(1,BNS_daysc)
-BNS_daysc
+BNS_liqdaysc<-c(1,BNS_liqdaysc)
+BNS_liqdaysc
 
 TD_liqdays<-c(1:length(TD_udays))
 for (i in c(1:length(TD_udays))) {
@@ -942,10 +1014,199 @@ BNS_daysc
 plot_colours <- c("blue", "red", "forestgreen", "yellow")
 plot_colours1 <- plot_colours[c(1,2)]
 
-plot(c(1:599), TD_liq$`effective spread`[c(TD_daysc[1]:TD_daysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+#### TD ES ####
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/ESTD/", paste(substr(as.character(row.names(TD_liq.df)[TD_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(TD_liq.df)[c((TD_liqdaysc[i]+1):TD_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       TD_liq$`effective spread`[c((TD_liqdaysc[i]+1):TD_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(TD_liq.df$date[TD_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+
+#### TD RS ####
+
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/RSTD/", paste(substr(as.character(row.names(TD_liq.df)[TD_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(TD_liq.df)[c((TD_liqdaysc[i]+1):TD_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       TD_liq$`realized spread`[c((TD_liqdaysc[i]+1):TD_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(TD_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(TD_liq.df$date[TD_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+#### BMO ES ####
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/ESBMO/", paste(substr(as.character(row.names(BMO_liq.df)[BMO_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(BMO_liq.df)[c((BMO_liqdaysc[i]+1):BMO_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       BMO_liq$`effective spread`[c((BMO_liqdaysc[i]+1):BMO_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("BMO", names(BMO_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(BMO_liq.df$date[BMO_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+
+#### BMO RS ####
+
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/RSBMO/", paste(substr(as.character(row.names(BMO_liq.df)[BMO_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(BMO_liq.df)[c((BMO_liqdaysc[i]+1):BMO_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       BMO_liq$`realized spread`[c((BMO_liqdaysc[i]+1):BMO_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("BMO", names(BMO_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(BMO_liq.df$date[BMO_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(BMO_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+#### RY ES ####
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/ESRY/", paste(substr(as.character(row.names(RY_liq.df)[RY_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(RY_liq.df)[c((RY_liqdaysc[i]+1):RY_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       RY_liq$`effective spread`[c((RY_liqdaysc[i]+1):RY_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(RY_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(RY_liq.df$date[RY_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+
+#### RY RS ####
+
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/RSRY/", paste(substr(as.character(row.names(RY_liq.df)[RY_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(RY_liq.df)[c((RY_liqdaysc[i]+1):RY_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       RY_liq$`realized spread`[c((RY_liqdaysc[i]+1):RY_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("RY", names(TD_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(RY_liq.df$date[RY_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(RY_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+#### BNS ES ####
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/ESBNS/", paste(substr(as.character(row.names(BNS_liq.df)[BNS_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(BNS_liq.df)[c((BNS_liqdaysc[i]+1):BNS_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       TD_liq$`effective spread`[c((BNS_liqdaysc[i]+1):BNS_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(BNS_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(BNS_liq.df$date[BNS_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(BNS_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+
+#### BNS RS ####
+
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/RSBNS/", paste(substr(as.character(row.names(BNS_liq.df)[BNS_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(BNS_liq.df)[c((BNS_liqdaysc[i]+1):BNS_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       BNS_liq$`realized spread`[c((BNS_liqdaysc[i]+1):BNS_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(BNS_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(BNS_liq.df$date[BNS_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(BNS_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+#### CM ES ####
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/ESCM/", paste(substr(as.character(row.names(CM_liq.df)[CM_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(CM_liq.df)[c((CM_liqdaysc[i]+1):CM_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       CM_liq$`effective spread`[c((CM_liqdaysc[i]+1):CM_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(CM_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(CM_liq.df$date[CM_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(CM_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+
+#### CM RS ####
+
+for (i in c(1:9)) {
+  png(filename=paste("~/Documents/RSCM/", paste(substr(as.character(row.names(CM_liq.df)[CM_liqdaysc[i]+1]), 1, 10), ".png", sep = ""), sep=""), width = 1000, height = 600)
+  plot(strptime(substr(row.names(CM_liq.df)[c((CM_liqdaysc[i]+1):CM_liqdaysc[i+1])], 12, 19), 
+                format = "%H:%M:%S"), 
+       CM_liq$`realized spread`[c((CM_liqdaysc[i]+1):CM_liqdaysc[i+1])], 
+       type="l", col=plot_colours1[1], ann=FALSE)
+  title(main=paste("TD", names(TD_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+  title(xlab=paste("Time on", as.character(as.Date(CM_liq.df$date[CM_liqdaysc[i]+1])), 
+                   sep = " "), col.lab=rgb(0,0.6,.7))
+  title(ylab=names(CM_liq)[1] , col.lab=rgb(0,0.6,.7))
+  dev.off()
+}
+
+paste(substr(row.names(TD_liq.df)[c(TD_liqdaysc[1]+1]), 12, 19), 
+      ".png", sep = "")
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[2]:TD_liqdaysc[3])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[2], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[2]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[2] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[3]:TD_liqdaysc[4])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[3], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[3]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[3] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
 title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
-title(xlab="Date", col.lab=rgb(0,0.6,.7))
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
 title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
+plot(as.POSIXct(row.names(TD_liq.df)[c(TD_liqdaysc[1]:TD_liqdaysc[2])]), TD_liq$`effective spread`[c(TD_liqdaysc[1]:TD_liqdaysc[2])], type="l", col=plot_colours1[1], ann=FALSE)
+title(main=paste("TD", names(TD_liq)[1], sep = " "), col.main="forestgreen", font.main=3)
+title(xlab=paste("Time on", as.character(as.Date(CMqc.df$date[TD_liqdaysc[1]])), sep = " "), col.lab=rgb(0,0.6,.7))
+title(ylab=names(TD_liq)[1] , col.lab=rgb(0,0.6,.7))
+
 
 
 
